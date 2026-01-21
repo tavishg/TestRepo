@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator - FinanceTools</title>
+    <meta name="description" content="Calculate your monthly mortgage payment, see amortization schedules, and understand the true cost of your home loan.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">$</div>
+                <span>FinanceTools</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="mortgage.html" class="active">Mortgage</a></li>
+                <li><a href="retirement.html">Retirement</a></li>
+                <li><a href="diversification.html">Diversification</a></li>
+                <li><a href="articles.html">Learn</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" style="padding: 3rem 0;">
+        <div class="container">
+            <h1>Mortgage Calculator</h1>
+            <p>Understand your monthly payments, total interest, and the true cost of homeownership.</p>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <section class="calculator-page">
+        <div class="container">
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <h3 style="margin-bottom: 1.5rem;">Loan Details</h3>
+
+                    <div class="form-group">
+                        <label for="homePrice">Home Price</label>
+                        <div class="input-group">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="homePrice" value="400000" min="0" step="1000" onchange="calculate()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="downPayment">Down Payment</label>
+                        <div class="input-group">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="downPayment" value="80000" min="0" step="1000" onchange="calculate()">
+                        </div>
+                        <small>Down payment: <span id="downPaymentPercent">20%</span> of home price</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interestRate">Interest Rate (Annual)</label>
+                        <div class="input-group">
+                            <input type="number" id="interestRate" value="6.5" min="0" max="20" step="0.125" onchange="calculate()">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loanTerm">Loan Term</label>
+                        <select id="loanTerm" onchange="calculate()">
+                            <option value="30" selected>30 years</option>
+                            <option value="20">20 years</option>
+                            <option value="15">15 years</option>
+                            <option value="10">10 years</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="propertyTax">Property Tax (Annual)</label>
+                        <div class="input-group">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="propertyTax" value="4800" min="0" step="100" onchange="calculate()">
+                        </div>
+                        <small>Average is 1-2% of home value per year</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="homeInsurance">Home Insurance (Annual)</label>
+                        <div class="input-group">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="homeInsurance" value="1800" min="0" step="100" onchange="calculate()">
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Pro Tip</h4>
+                        <p>A 20% down payment helps you avoid private mortgage insurance (PMI), which can add $100-$300/month to your costs.</p>
+                    </div>
+                </div>
+
+                <div class="calculator-results">
+                    <h3 style="margin-bottom: 1.5rem;">Your Monthly Payment</h3>
+
+                    <div class="result-card highlight">
+                        <h4>Total Monthly Payment</h4>
+                        <div class="result-value" id="totalMonthly">$2,569</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="result-card">
+                            <h4>Principal & Interest</h4>
+                            <div class="result-value" style="font-size: 1.5rem;" id="principalInterest">$2,019</div>
+                        </div>
+                        <div class="result-card">
+                            <h4>Taxes & Insurance</h4>
+                            <div class="result-value" style="font-size: 1.5rem;" id="taxInsurance">$550</div>
+                        </div>
+                    </div>
+
+                    <div class="result-breakdown">
+                        <h4 style="margin-bottom: 1rem;">Loan Summary</h4>
+                        <div class="breakdown-item">
+                            <span>Loan Amount</span>
+                            <strong id="loanAmount">$320,000</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Total of Payments</span>
+                            <strong id="totalPayments">$726,958</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Total Interest Paid</span>
+                            <strong id="totalInterest">$406,958</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Payoff Date</span>
+                            <strong id="payoffDate">January 2055</strong>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h4 style="margin-bottom: 1rem;">Payment Breakdown</h4>
+                        <div class="allocation-bar" id="paymentBar">
+                            <div class="allocation-segment" style="background: #1a365d; flex: 44;">Principal</div>
+                            <div class="allocation-segment" style="background: #ed8936; flex: 56;">Interest</div>
+                        </div>
+                        <div class="allocation-legend">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #1a365d;"></span>
+                                <span>Principal: <span id="principalPercent">44%</span></span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #ed8936;"></span>
+                                <span>Interest: <span id="interestPercent">56%</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <h4>What This Means</h4>
+                        <p id="insightText">Over 30 years, you'll pay $406,958 in interest—that's 127% of your original loan! Consider a 15-year term to save on interest.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amortization Schedule -->
+            <div style="margin-top: 3rem;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Amortization Schedule (First 12 Months)</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="comparison-table" id="amortizationTable">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Payment</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="amortizationBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="features-section" style="margin-top: 3rem;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Mortgage Tips for First-Time Buyers</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>28/36 Rule</h4>
+                    <p>Keep housing costs under 28% of gross income, and total debt under 36%. This keeps your finances healthy.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <h4>Compare Rates</h4>
+                    <p>Even 0.25% lower interest can save tens of thousands over your loan. Get quotes from multiple lenders.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <h4>Extra Payments</h4>
+                    <p>One extra payment per year can shave years off your mortgage and save thousands in interest.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📋</div>
+                    <h4>Hidden Costs</h4>
+                    <p>Budget for closing costs (2-5% of loan), maintenance (1% of home value/year), and potential HOA fees.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">$</div>
+                        <span style="color: white;">FinanceTools</span>
+                    </div>
+                    <p>Empowering people to make smarter financial decisions through free tools and education.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="mortgage.html">Mortgage Calculator</a></li>
+                        <li><a href="retirement.html">Retirement Planner</a></li>
+                        <li><a href="diversification.html">Diversification Tool</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Learn</h4>
+                    <ul>
+                        <li><a href="articles.html">All Articles</a></li>
+                        <li><a href="articles.html">Beginner Guides</a></li>
+                        <li><a href="articles.html">Retirement Planning</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FinanceTools. All rights reserved. For educational purposes only—not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        function calculate() {
+            const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const years = parseInt(document.getElementById('loanTerm').value) || 30;
+            const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
+            const homeInsurance = parseFloat(document.getElementById('homeInsurance').value) || 0;
+
+            const loanAmount = homePrice - downPayment;
+            const monthlyRate = annualRate / 100 / 12;
+            const numPayments = years * 12;
+
+            // Calculate down payment percentage
+            const downPaymentPercent = homePrice > 0 ? ((downPayment / homePrice) * 100).toFixed(1) : 0;
+            document.getElementById('downPaymentPercent').textContent = downPaymentPercent + '%';
+
+            // Calculate monthly P&I payment
+            let monthlyPI;
+            if (monthlyRate === 0) {
+                monthlyPI = loanAmount / numPayments;
+            } else {
+                monthlyPI = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
+                           (Math.pow(1 + monthlyRate, numPayments) - 1);
+            }
+
+            // Monthly taxes and insurance
+            const monthlyTaxInsurance = (propertyTax + homeInsurance) / 12;
+            const totalMonthly = monthlyPI + monthlyTaxInsurance;
+
+            // Total payments and interest
+            const totalPIPayments = monthlyPI * numPayments;
+            const totalInterest = totalPIPayments - loanAmount;
+
+            // Calculate payoff date
+            const payoffDate = new Date();
+            payoffDate.setMonth(payoffDate.getMonth() + numPayments);
+            const payoffString = payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            // Update display
+            document.getElementById('totalMonthly').textContent = formatCurrency(totalMonthly);
+            document.getElementById('principalInterest').textContent = formatCurrency(monthlyPI);
+            document.getElementById('taxInsurance').textContent = formatCurrency(monthlyTaxInsurance);
+            document.getElementById('loanAmount').textContent = formatCurrency(loanAmount);
+            document.getElementById('totalPayments').textContent = formatCurrency(totalPIPayments);
+            document.getElementById('totalInterest').textContent = formatCurrency(totalInterest);
+            document.getElementById('payoffDate').textContent = payoffString;
+
+            // Update payment breakdown bar
+            const principalPercent = loanAmount > 0 ? Math.round((loanAmount / totalPIPayments) * 100) : 0;
+            const interestPercent = 100 - principalPercent;
+
+            document.getElementById('principalPercent').textContent = principalPercent + '%';
+            document.getElementById('interestPercent').textContent = interestPercent + '%';
+
+            const paymentBar = document.getElementById('paymentBar');
+            paymentBar.innerHTML = `
+                <div class="allocation-segment" style="background: #1a365d; flex: ${principalPercent};">${principalPercent > 15 ? 'Principal' : ''}</div>
+                <div class="allocation-segment" style="background: #ed8936; flex: ${interestPercent};">${interestPercent > 15 ? 'Interest' : ''}</div>
+            `;
+
+            // Update insight text
+            const interestRatio = loanAmount > 0 ? ((totalInterest / loanAmount) * 100).toFixed(0) : 0;
+            let insightText = '';
+            if (years >= 30) {
+                insightText = `Over ${years} years, you'll pay ${formatCurrency(totalInterest)} in interest—that's ${interestRatio}% of your original loan! Consider a 15-year term to save on interest.`;
+            } else if (years >= 15) {
+                insightText = `Good choice on the ${years}-year term! You'll pay ${formatCurrency(totalInterest)} in interest (${interestRatio}% of your loan), which is much better than a 30-year mortgage.`;
+            } else {
+                insightText = `Excellent! With a ${years}-year term, you'll only pay ${formatCurrency(totalInterest)} in interest. Your higher monthly payment saves you significantly in the long run.`;
+            }
+            document.getElementById('insightText').textContent = insightText;
+
+            // Generate amortization schedule
+            generateAmortization(loanAmount, monthlyRate, monthlyPI, numPayments);
+        }
+
+        function generateAmortization(loanAmount, monthlyRate, monthlyPayment, numPayments) {
+            const tbody = document.getElementById('amortizationBody');
+            tbody.innerHTML = '';
+
+            let balance = loanAmount;
+            const monthsToShow = Math.min(12, numPayments);
+
+            for (let month = 1; month <= monthsToShow; month++) {
+                const interestPayment = balance * monthlyRate;
+                const principalPayment = monthlyPayment - interestPayment;
+                balance -= principalPayment;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td>${formatCurrency(monthlyPayment)}</td>
+                    <td>${formatCurrency(principalPayment)}</td>
+                    <td>${formatCurrency(interestPayment)}</td>
+                    <td>${formatCurrency(Math.max(0, balance))}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
