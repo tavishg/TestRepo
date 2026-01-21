@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Diversification Tool - FinanceTools</title>
+    <meta name="description" content="Explore how diversification can improve your risk-adjusted returns. See the impact of adding different asset classes including stocks, bonds, real estate, and digital assets.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .slider-container {
+            margin-bottom: 1.5rem;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .slider-label {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .slider-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            min-width: 50px;
+            text-align: right;
+        }
+        .asset-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            margin: 0.5rem 0;
+        }
+        .asset-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        #stocks-slider { background: linear-gradient(to right, #1a365d 0%, #e2e8f0 0%); }
+        #stocks-slider::-webkit-slider-thumb { background: #1a365d; }
+        #bonds-slider { background: linear-gradient(to right, #38a169 0%, #e2e8f0 0%); }
+        #bonds-slider::-webkit-slider-thumb { background: #38a169; }
+        #realestate-slider { background: linear-gradient(to right, #ed8936 0%, #e2e8f0 0%); }
+        #realestate-slider::-webkit-slider-thumb { background: #ed8936; }
+        #international-slider { background: linear-gradient(to right, #805ad5 0%, #e2e8f0 0%); }
+        #international-slider::-webkit-slider-thumb { background: #805ad5; }
+        #bitcoin-slider { background: linear-gradient(to right, #f7931a 0%, #e2e8f0 0%); }
+        #bitcoin-slider::-webkit-slider-thumb { background: #f7931a; }
+        #gold-slider { background: linear-gradient(to right, #d69e2e 0%, #e2e8f0 0%); }
+        #gold-slider::-webkit-slider-thumb { background: #d69e2e; }
+
+        .allocation-total {
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .allocation-total.over {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        .allocation-total.under {
+            background: #fefcbf;
+            color: #975a16;
+        }
+        .allocation-total.valid {
+            background: #c6f6d5;
+            color: #276749;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .metric-card {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+        .metric-card h5 {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .comparison-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+        .comparison-label {
+            width: 140px;
+            font-weight: 600;
+        }
+        .comparison-bar-container {
+            flex: 1;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .comparison-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">$</div>
+                <span>FinanceTools</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="mortgage.html">Mortgage</a></li>
+                <li><a href="retirement.html">Retirement</a></li>
+                <li><a href="diversification.html" class="active">Diversification</a></li>
+                <li><a href="articles.html">Learn</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" style="padding: 3rem 0;">
+        <div class="container">
+            <h1>Portfolio Diversification</h1>
+            <p>Discover how spreading your investments across different asset classes can reduce risk while maintaining returns.</p>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <section class="calculator-page">
+        <div class="container">
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <h3 style="margin-bottom: 1.5rem;">Build Your Portfolio</h3>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-light);">Adjust the sliders to allocate your portfolio. Total must equal 100%.</p>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #1a365d; border-radius: 4px; display: inline-block;"></span>
+                                US Stocks
+                            </span>
+                            <span class="slider-value" id="stocks-value">50%</span>
+                        </div>
+                        <input type="range" id="stocks-slider" class="asset-slider" min="0" max="100" value="50" oninput="updatePortfolio()">
+                        <small>S&P 500, US total market funds</small>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #38a169; border-radius: 4px; display: inline-block;"></span>
+                                Bonds
+                            </span>
+                            <span class="slider-value" id="bonds-value">30%</span>
+                        </div>
+                        <input type="range" id="bonds-slider" class="asset-slider" min="0" max="100" value="30" oninput="updatePortfolio()">
+                        <small>Government & corporate bonds</small>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #ed8936; border-radius: 4px; display: inline-block;"></span>
+                                Real Estate (REITs)
+                            </span>
+                            <span class="slider-value" id="realestate-value">10%</span>
+                        </div>
+                        <input type="range" id="realestate-slider" class="asset-slider" min="0" max="100" value="10" oninput="updatePortfolio()">
+                        <small>Real estate investment trusts</small>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #805ad5; border-radius: 4px; display: inline-block;"></span>
+                                International Stocks
+                            </span>
+                            <span class="slider-value" id="international-value">10%</span>
+                        </div>
+                        <input type="range" id="international-slider" class="asset-slider" min="0" max="100" value="10" oninput="updatePortfolio()">
+                        <small>Developed & emerging markets</small>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #f7931a; border-radius: 4px; display: inline-block;"></span>
+                                Bitcoin / Digital Assets
+                            </span>
+                            <span class="slider-value" id="bitcoin-value">0%</span>
+                        </div>
+                        <input type="range" id="bitcoin-slider" class="asset-slider" min="0" max="20" value="0" oninput="updatePortfolio()">
+                        <small>High volatility, potential diversification benefit</small>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">
+                                <span style="width: 16px; height: 16px; background: #d69e2e; border-radius: 4px; display: inline-block;"></span>
+                                Gold / Commodities
+                            </span>
+                            <span class="slider-value" id="gold-value">0%</span>
+                        </div>
+                        <input type="range" id="gold-slider" class="asset-slider" min="0" max="20" value="0" oninput="updatePortfolio()">
+                        <small>Traditional inflation hedge</small>
+                    </div>
+
+                    <div class="allocation-total valid" id="allocation-total">
+                        Total Allocation: <strong>100%</strong>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 1.5rem;">
+                        <h4>Why Diversify?</h4>
+                        <p>Different assets often move in different directions. When stocks fall, bonds might rise. This reduces overall portfolio volatility without necessarily sacrificing returns.</p>
+                    </div>
+                </div>
+
+                <div class="calculator-results">
+                    <h3 style="margin-bottom: 1.5rem;">Portfolio Analysis</h3>
+
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <h5>Expected Return</h5>
+                            <div class="metric-value" id="expected-return">7.2%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Volatility (Risk)</h5>
+                            <div class="metric-value" id="volatility">12.5%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Sharpe Ratio</h5>
+                            <div class="metric-value" id="sharpe">0.58</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h4 style="margin-bottom: 1rem;">Your Allocation</h4>
+                        <div class="allocation-bar" id="portfolio-bar" style="height: 50px;">
+                            <!-- Filled by JS -->
+                        </div>
+                        <div class="allocation-legend" id="portfolio-legend" style="margin-top: 1rem;">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <div class="result-breakdown" style="margin-top: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">Compare to Benchmarks</h4>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">Your Portfolio</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" id="your-return-bar" style="width: 72%; background: var(--primary-color);">7.2%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">100% Stocks</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 100%; background: #718096;">10.0%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">60/40 Portfolio</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 76%; background: #718096;">7.6%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">100% Bonds</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 40%; background: #718096;">4.0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-breakdown" style="margin-top: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">Risk Comparison</h4>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">Your Portfolio</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" id="your-risk-bar" style="width: 62%; background: var(--secondary-color);">12.5%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">100% Stocks</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 100%; background: #e53e3e;">20.0%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">60/40 Portfolio</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 55%; background: #718096;">11.0%</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <span class="comparison-label">100% Bonds</span>
+                            <div class="comparison-bar-container">
+                                <div class="comparison-bar" style="width: 25%; background: #38a169;">5.0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;" id="portfolio-insight">
+                        <h4>Portfolio Insight</h4>
+                        <p>Your balanced portfolio offers a good mix of growth and stability. The diversification reduces risk while maintaining reasonable expected returns.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bitcoin Section -->
+            <div style="margin-top: 3rem;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">The Case for Bitcoin in a Diversified Portfolio</h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4 style="margin-bottom: 1rem; color: var(--secondary-color);">Potential Benefits</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: var(--secondary-color);">✓</span>
+                                    <span><strong>Low Correlation:</strong> Bitcoin has historically shown low correlation with traditional assets, providing true diversification.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: var(--secondary-color);">✓</span>
+                                    <span><strong>Asymmetric Upside:</strong> Small allocations (1-5%) can significantly boost returns if Bitcoin appreciates.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: var(--secondary-color);">✓</span>
+                                    <span><strong>Inflation Hedge:</strong> Fixed supply makes it a potential hedge against monetary inflation.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: var(--secondary-color);">✓</span>
+                                    <span><strong>Growing Adoption:</strong> Institutional adoption continues to increase, potentially reducing volatility over time.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 1rem; color: #e53e3e;">Important Risks</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #e53e3e;">!</span>
+                                    <span><strong>Extreme Volatility:</strong> Bitcoin can lose 50%+ in months. Only invest what you can afford to lose.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #e53e3e;">!</span>
+                                    <span><strong>Regulatory Risk:</strong> Government actions could impact value and accessibility.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #e53e3e;">!</span>
+                                    <span><strong>No Cash Flows:</strong> Unlike stocks or bonds, Bitcoin generates no income—returns depend entirely on price appreciation.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #e53e3e;">!</span>
+                                    <span><strong>Security Concerns:</strong> Self-custody requires technical knowledge; exchange risks exist.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <h4>Research Suggests</h4>
+                        <p>Studies from firms like Fidelity and Yale have found that a small Bitcoin allocation (1-5%) may improve risk-adjusted returns due to its low correlation with other assets. However, past performance doesn't guarantee future results, and Bitcoin remains highly speculative.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Class Details -->
+            <div style="margin-top: 3rem;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Understanding Asset Classes</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Asset Class</th>
+                                <th>Historical Return*</th>
+                                <th>Volatility</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>US Stocks</strong></td>
+                                <td>10%</td>
+                                <td>High (20%)</td>
+                                <td>Long-term growth</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bonds</strong></td>
+                                <td>4%</td>
+                                <td>Low (5%)</td>
+                                <td>Stability & income</td>
+                            </tr>
+                            <tr>
+                                <td><strong>REITs</strong></td>
+                                <td>8%</td>
+                                <td>Medium (18%)</td>
+                                <td>Income & inflation protection</td>
+                            </tr>
+                            <tr>
+                                <td><strong>International</strong></td>
+                                <td>7%</td>
+                                <td>High (22%)</td>
+                                <td>Geographic diversification</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bitcoin</strong></td>
+                                <td>50%+**</td>
+                                <td>Very High (80%)</td>
+                                <td>Speculative growth</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gold</strong></td>
+                                <td>5%</td>
+                                <td>Medium (15%)</td>
+                                <td>Crisis hedge</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 1rem;">
+                        *Long-term historical averages (stocks since 1926, bonds since 1976, Bitcoin since 2013). **Bitcoin's short history and extreme volatility make projections unreliable. Past performance does not guarantee future results.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="features-section" style="margin-top: 3rem;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Diversification Principles</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Correlation Matters</h4>
+                    <p>Assets that move independently provide better diversification than those that rise and fall together.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚖️</div>
+                    <h4>Rebalance Regularly</h4>
+                    <p>Review your allocation annually and rebalance when it drifts more than 5% from your target.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌍</div>
+                    <h4>Go Global</h4>
+                    <p>International stocks provide exposure to 50%+ of global market cap and reduce home country bias.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <h4>Risk = Age</h4>
+                    <p>A common rule: subtract your age from 110 for your stock allocation. At 30, that's 80% stocks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">$</div>
+                        <span style="color: white;">FinanceTools</span>
+                    </div>
+                    <p>Empowering people to make smarter financial decisions through free tools and education.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="mortgage.html">Mortgage Calculator</a></li>
+                        <li><a href="retirement.html">Retirement Planner</a></li>
+                        <li><a href="diversification.html">Diversification Tool</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Learn</h4>
+                    <ul>
+                        <li><a href="articles.html">All Articles</a></li>
+                        <li><a href="articles.html">Beginner Guides</a></li>
+                        <li><a href="articles.html">Retirement Planning</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FinanceTools. All rights reserved. For educational purposes only—not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        // Asset data (simplified historical estimates)
+        const assetData = {
+            stocks: { return: 10, volatility: 20, color: '#1a365d', name: 'US Stocks' },
+            bonds: { return: 4, volatility: 5, color: '#38a169', name: 'Bonds' },
+            realestate: { return: 8, volatility: 18, color: '#ed8936', name: 'REITs' },
+            international: { return: 7, volatility: 22, color: '#805ad5', name: 'International' },
+            bitcoin: { return: 30, volatility: 80, color: '#f7931a', name: 'Bitcoin' },
+            gold: { return: 5, volatility: 15, color: '#d69e2e', name: 'Gold' }
+        };
+
+        // Correlation matrix (simplified)
+        const correlations = {
+            stocks: { stocks: 1, bonds: -0.2, realestate: 0.6, international: 0.8, bitcoin: 0.3, gold: 0 },
+            bonds: { stocks: -0.2, bonds: 1, realestate: 0.2, international: -0.1, bitcoin: 0, gold: 0.3 },
+            realestate: { stocks: 0.6, bonds: 0.2, realestate: 1, international: 0.5, bitcoin: 0.2, gold: 0.1 },
+            international: { stocks: 0.8, bonds: -0.1, realestate: 0.5, international: 1, bitcoin: 0.3, gold: 0.1 },
+            bitcoin: { stocks: 0.3, bonds: 0, realestate: 0.2, international: 0.3, bitcoin: 1, gold: 0.1 },
+            gold: { stocks: 0, bonds: 0.3, realestate: 0.1, international: 0.1, bitcoin: 0.1, gold: 1 }
+        };
+
+        function updatePortfolio() {
+            const allocations = {
+                stocks: parseInt(document.getElementById('stocks-slider').value),
+                bonds: parseInt(document.getElementById('bonds-slider').value),
+                realestate: parseInt(document.getElementById('realestate-slider').value),
+                international: parseInt(document.getElementById('international-slider').value),
+                bitcoin: parseInt(document.getElementById('bitcoin-slider').value),
+                gold: parseInt(document.getElementById('gold-slider').value)
+            };
+
+            // Update slider backgrounds
+            Object.keys(allocations).forEach(asset => {
+                const slider = document.getElementById(asset + '-slider');
+                const max = parseInt(slider.max);
+                const percent = (allocations[asset] / max) * 100;
+                slider.style.background = `linear-gradient(to right, ${assetData[asset].color} ${percent}%, #e2e8f0 ${percent}%)`;
+                document.getElementById(asset + '-value').textContent = allocations[asset] + '%';
+            });
+
+            // Calculate total
+            const total = Object.values(allocations).reduce((a, b) => a + b, 0);
+            const totalDiv = document.getElementById('allocation-total');
+            totalDiv.innerHTML = `Total Allocation: <strong>${total}%</strong>`;
+
+            if (total > 100) {
+                totalDiv.className = 'allocation-total over';
+            } else if (total < 100) {
+                totalDiv.className = 'allocation-total under';
+            } else {
+                totalDiv.className = 'allocation-total valid';
+            }
+
+            // Calculate portfolio metrics
+            if (total > 0) {
+                // Normalize allocations
+                const weights = {};
+                Object.keys(allocations).forEach(asset => {
+                    weights[asset] = allocations[asset] / 100;
+                });
+
+                // Expected return (weighted average)
+                let expectedReturn = 0;
+                Object.keys(weights).forEach(asset => {
+                    expectedReturn += weights[asset] * assetData[asset].return;
+                });
+
+                // Portfolio variance (using correlation matrix)
+                let portfolioVariance = 0;
+                Object.keys(weights).forEach(asset1 => {
+                    Object.keys(weights).forEach(asset2 => {
+                        portfolioVariance += weights[asset1] * weights[asset2] *
+                            assetData[asset1].volatility * assetData[asset2].volatility *
+                            correlations[asset1][asset2] / 100;
+                    });
+                });
+
+                const volatility = Math.sqrt(portfolioVariance);
+                const sharpeRatio = (expectedReturn - 2) / volatility; // Assuming 2% risk-free rate
+
+                // Update display
+                document.getElementById('expected-return').textContent = expectedReturn.toFixed(1) + '%';
+                document.getElementById('volatility').textContent = volatility.toFixed(1) + '%';
+                document.getElementById('sharpe').textContent = sharpeRatio.toFixed(2);
+
+                // Update comparison bars
+                const returnBar = document.getElementById('your-return-bar');
+                const returnPercent = (expectedReturn / 10) * 100;
+                returnBar.style.width = Math.min(100, returnPercent) + '%';
+                returnBar.textContent = expectedReturn.toFixed(1) + '%';
+
+                const riskBar = document.getElementById('your-risk-bar');
+                const riskPercent = (volatility / 20) * 100;
+                riskBar.style.width = Math.min(100, riskPercent) + '%';
+                riskBar.textContent = volatility.toFixed(1) + '%';
+
+                // Update allocation bar
+                const portfolioBar = document.getElementById('portfolio-bar');
+                const portfolioLegend = document.getElementById('portfolio-legend');
+                let barHTML = '';
+                let legendHTML = '';
+
+                Object.keys(allocations).forEach(asset => {
+                    if (allocations[asset] > 0) {
+                        barHTML += `<div class="allocation-segment" style="background: ${assetData[asset].color}; flex: ${allocations[asset]};">${allocations[asset] > 8 ? allocations[asset] + '%' : ''}</div>`;
+                        legendHTML += `
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: ${assetData[asset].color};"></span>
+                                <span>${assetData[asset].name}: ${allocations[asset]}%</span>
+                            </div>
+                        `;
+                    }
+                });
+
+                portfolioBar.innerHTML = barHTML;
+                portfolioLegend.innerHTML = legendHTML;
+
+                // Update insight
+                updateInsight(allocations, expectedReturn, volatility, sharpeRatio);
+            }
+        }
+
+        function updateInsight(allocations, expectedReturn, volatility, sharpe) {
+            const insightBox = document.getElementById('portfolio-insight');
+            let insight = '';
+
+            if (allocations.bitcoin > 10) {
+                insight = `<h4>High Bitcoin Allocation</h4><p>A ${allocations.bitcoin}% Bitcoin allocation significantly increases both potential returns and risk. Consider limiting to 1-5% for most portfolios. This is a high-risk speculative position.</p>`;
+            } else if (allocations.bitcoin > 0 && allocations.bitcoin <= 5) {
+                insight = `<h4>Small Bitcoin Position</h4><p>Your ${allocations.bitcoin}% Bitcoin allocation adds diversification due to low correlation with other assets. This is consistent with research suggesting small allocations may improve risk-adjusted returns.</p>`;
+            } else if (allocations.stocks > 80) {
+                insight = `<h4>Aggressive Growth Portfolio</h4><p>With ${allocations.stocks}% in stocks, this is an aggressive portfolio suitable for young investors with long time horizons. Expect significant volatility but historically strong long-term returns.</p>`;
+            } else if (allocations.bonds > 50) {
+                insight = `<h4>Conservative Portfolio</h4><p>With ${allocations.bonds}% in bonds, this portfolio prioritizes stability over growth. Good for those near retirement or with low risk tolerance, but may not keep pace with inflation over time.</p>`;
+            } else if (sharpe > 0.5) {
+                insight = `<h4>Well-Balanced Portfolio</h4><p>Your portfolio has a good Sharpe ratio of ${sharpe.toFixed(2)}, meaning you're getting reasonable returns for the risk taken. The diversification is working to reduce volatility.</p>`;
+            } else {
+                insight = `<h4>Portfolio Analysis</h4><p>Expected return: ${expectedReturn.toFixed(1)}% with ${volatility.toFixed(1)}% volatility. Consider adjusting allocations to improve your risk-adjusted returns (Sharpe ratio).</p>`;
+            }
+
+            insightBox.innerHTML = insight;
+        }
+
+        // Initialize
+        updatePortfolio();
+    </script>
+</body>
+</html>

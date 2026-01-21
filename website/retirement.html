@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Calculator - FinanceTools</title>
+    <meta name="description" content="Plan your retirement with confidence. Calculate how much you need to save, project your retirement income, and understand how inflation affects your plans.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">$</div>
+                <span>FinanceTools</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="mortgage.html">Mortgage</a></li>
+                <li><a href="retirement.html" class="active">Retirement</a></li>
+                <li><a href="diversification.html">Diversification</a></li>
+                <li><a href="articles.html">Learn</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" style="padding: 3rem 0;">
+        <div class="container">
+            <h1>Retirement Income Planner</h1>
+            <p>Calculate how much you need to retire comfortably and build an income portfolio that lasts.</p>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <section class="calculator-page">
+        <div class="container">
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab('accumulation')">Savings Phase</button>
+                        <button class="tab-btn" onclick="switchTab('income')">Income Phase</button>
+                    </div>
+
+                    <!-- Accumulation Tab -->
+                    <div id="accumulation-tab" class="tab-content active">
+                        <h3 style="margin-bottom: 1.5rem;">Your Situation</h3>
+
+                        <div class="form-group">
+                            <label for="currentAge">Current Age</label>
+                            <input type="number" id="currentAge" value="30" min="18" max="80" onchange="calculate()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="retirementAge">Retirement Age</label>
+                            <input type="number" id="retirementAge" value="65" min="50" max="80" onchange="calculate()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lifeExpectancy">Plan Until Age</label>
+                            <input type="number" id="lifeExpectancy" value="90" min="70" max="100" onchange="calculate()">
+                            <small>Plan conservatively—many people live into their 90s</small>
+                        </div>
+
+                        <h3 style="margin: 2rem 0 1.5rem;">Current Savings</h3>
+
+                        <div class="form-group">
+                            <label for="currentSavings">Current Retirement Savings</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="currentSavings" value="50000" min="0" step="1000" onchange="calculate()">
+                            </div>
+                            <small>401(k), IRA, and other retirement accounts</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="monthlyContribution">Monthly Contribution</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="monthlyContribution" value="1000" min="0" step="50" onchange="calculate()">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expectedReturn">Expected Annual Return</label>
+                            <div class="input-group">
+                                <input type="number" id="expectedReturn" value="7" min="0" max="15" step="0.5" onchange="calculate()">
+                                <span class="input-suffix">%</span>
+                            </div>
+                            <small>Historical stock market average is ~7% after inflation</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inflationRate">Expected Inflation</label>
+                            <div class="input-group">
+                                <input type="number" id="inflationRate" value="3" min="0" max="10" step="0.5" onchange="calculate()">
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Income Tab -->
+                    <div id="income-tab" class="tab-content">
+                        <h3 style="margin-bottom: 1.5rem;">Expected Income Sources</h3>
+
+                        <div class="form-group">
+                            <label for="desiredIncome">Desired Monthly Income (Today's $)</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="desiredIncome" value="5000" min="0" step="100" onchange="calculate()">
+                            </div>
+                            <small>What monthly income do you want in retirement?</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="socialSecurity">Expected Social Security (Monthly)</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="socialSecurity" value="2000" min="0" step="100" onchange="calculate()">
+                            </div>
+                            <small>Check ssa.gov for your estimate</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pensionIncome">Pension Income (Monthly)</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="pensionIncome" value="0" min="0" step="100" onchange="calculate()">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="otherIncome">Other Income (Monthly)</label>
+                            <div class="input-group">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="otherIncome" value="0" min="0" step="100" onchange="calculate()">
+                            </div>
+                            <small>Rental income, part-time work, etc.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="withdrawalRate">Safe Withdrawal Rate</label>
+                            <div class="input-group">
+                                <input type="number" id="withdrawalRate" value="4" min="2" max="6" step="0.5" onchange="calculate()">
+                                <span class="input-suffix">%</span>
+                            </div>
+                            <small>4% rule is a common guideline for sustainable withdrawals</small>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 1.5rem;">
+                        <h4>The Power of Starting Early</h4>
+                        <p>Starting 10 years earlier can double your retirement savings due to compound growth. Every year counts!</p>
+                    </div>
+                </div>
+
+                <div class="calculator-results">
+                    <h3 style="margin-bottom: 1.5rem;">Your Retirement Outlook</h3>
+
+                    <div class="result-card highlight">
+                        <h4>Projected Retirement Savings</h4>
+                        <div class="result-value" id="projectedSavings">$1,425,000</div>
+                        <small style="opacity: 0.8;">At age <span id="retireAgeDisplay">65</span></small>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="result-card">
+                            <h4>Monthly from Savings</h4>
+                            <div class="result-value" style="font-size: 1.5rem;" id="monthlyFromSavings">$4,750</div>
+                            <small>At 4% withdrawal</small>
+                        </div>
+                        <div class="result-card">
+                            <h4>Total Monthly Income</h4>
+                            <div class="result-value" style="font-size: 1.5rem;" id="totalMonthlyIncome">$6,750</div>
+                            <small>All sources</small>
+                        </div>
+                    </div>
+
+                    <div class="result-breakdown">
+                        <h4 style="margin-bottom: 1rem;">Income Breakdown at Retirement</h4>
+                        <div class="breakdown-item">
+                            <span>From Savings (4% rule)</span>
+                            <strong id="savingsIncome">$4,750/mo</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Social Security</span>
+                            <strong id="ssIncome">$2,000/mo</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Pension</span>
+                            <strong id="pensionIncomeDisplay">$0/mo</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Other Income</span>
+                            <strong id="otherIncomeDisplay">$0/mo</strong>
+                        </div>
+                        <div class="breakdown-item" style="border-top: 2px solid var(--primary-color); padding-top: 1rem;">
+                            <span><strong>Total Monthly Income</strong></span>
+                            <strong id="totalIncomeDisplay" style="color: var(--secondary-color);">$6,750/mo</strong>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h4 style="margin-bottom: 1rem;">Income vs. Goal</h4>
+                        <div class="allocation-bar" id="incomeBar" style="height: 40px;">
+                            <div class="allocation-segment" style="background: #38a169; flex: 100;">100%</div>
+                        </div>
+                        <p id="incomeGapText" style="text-align: center; margin-top: 1rem; font-weight: 600; color: var(--secondary-color);">
+                            You're on track! Projected income exceeds your goal.
+                        </p>
+                    </div>
+
+                    <div class="result-breakdown" style="margin-top: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">Savings Milestones</h4>
+                        <div class="breakdown-item">
+                            <span>Years Until Retirement</span>
+                            <strong id="yearsToRetirement">35 years</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Total Contributions</span>
+                            <strong id="totalContributions">$420,000</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Investment Growth</span>
+                            <strong id="investmentGrowth">$1,005,000</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Nest Egg Lasts Until</span>
+                            <strong id="nestEggLasts">Age 90+</strong>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <h4>Inflation Impact</h4>
+                        <p id="inflationNote">Your $5,000/mo goal today will feel like needing $14,785/mo in 35 years due to inflation. Plan accordingly!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Insights -->
+            <div style="margin-top: 3rem;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Building Your Retirement Income Portfolio</h3>
+                    <p style="margin-bottom: 1.5rem;">A well-structured retirement portfolio generates income from multiple sources while preserving capital. Here's a sample allocation:</p>
+
+                    <div class="allocation-bar" style="height: 40px; margin-bottom: 1rem;">
+                        <div class="allocation-segment" style="background: #1a365d; flex: 40;">Bonds 40%</div>
+                        <div class="allocation-segment" style="background: #38a169; flex: 30;">Div. Stocks 30%</div>
+                        <div class="allocation-segment" style="background: #ed8936; flex: 20;">REITs 20%</div>
+                        <div class="allocation-segment" style="background: #805ad5; flex: 10;">Cash 10%</div>
+                    </div>
+
+                    <div class="allocation-legend" style="margin-bottom: 2rem;">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #1a365d;"></span>
+                            <span>Bonds (Stability & Income)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #38a169;"></span>
+                            <span>Dividend Stocks (Growth & Income)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ed8936;"></span>
+                            <span>REITs (Real Estate Income)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #805ad5;"></span>
+                            <span>Cash (Liquidity & Safety)</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>The Bucket Strategy</h4>
+                        <p>Consider dividing your retirement savings into three buckets: short-term (1-2 years of expenses in cash), medium-term (3-7 years in bonds), and long-term (remaining in stocks for growth). This provides stability while maintaining growth potential.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="features-section" style="margin-top: 3rem;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Keys to a Successful Retirement</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Start Early</h4>
+                    <p>Time is your biggest asset. Starting at 25 vs 35 can mean twice the retirement savings.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <h4>Maximize Matches</h4>
+                    <p>Always contribute enough to get your full employer 401(k) match. It's free money.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Diversify Income</h4>
+                    <p>Don't rely on one source. Mix Social Security, savings, and possibly part-time income.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💊</div>
+                    <h4>Plan for Healthcare</h4>
+                    <p>Healthcare costs often surprise retirees. Budget for Medicare and supplemental insurance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">$</div>
+                        <span style="color: white;">FinanceTools</span>
+                    </div>
+                    <p>Empowering people to make smarter financial decisions through free tools and education.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="mortgage.html">Mortgage Calculator</a></li>
+                        <li><a href="retirement.html">Retirement Planner</a></li>
+                        <li><a href="diversification.html">Diversification Tool</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Learn</h4>
+                    <ul>
+                        <li><a href="articles.html">All Articles</a></li>
+                        <li><a href="articles.html">Beginner Guides</a></li>
+                        <li><a href="articles.html">Retirement Planning</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FinanceTools. All rights reserved. For educational purposes only—not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        function switchTab(tab) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        function calculate() {
+            // Get inputs
+            const currentAge = parseInt(document.getElementById('currentAge').value) || 30;
+            const retirementAge = parseInt(document.getElementById('retirementAge').value) || 65;
+            const lifeExpectancy = parseInt(document.getElementById('lifeExpectancy').value) || 90;
+            const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+            const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value) || 0;
+            const expectedReturn = parseFloat(document.getElementById('expectedReturn').value) || 7;
+            const inflationRate = parseFloat(document.getElementById('inflationRate').value) || 3;
+            const desiredIncome = parseFloat(document.getElementById('desiredIncome').value) || 5000;
+            const socialSecurity = parseFloat(document.getElementById('socialSecurity').value) || 0;
+            const pensionIncome = parseFloat(document.getElementById('pensionIncome').value) || 0;
+            const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+            const withdrawalRate = parseFloat(document.getElementById('withdrawalRate').value) || 4;
+
+            const yearsToRetirement = Math.max(0, retirementAge - currentAge);
+            const yearsInRetirement = lifeExpectancy - retirementAge;
+            const monthsToRetirement = yearsToRetirement * 12;
+
+            // Calculate future value of current savings + contributions
+            const monthlyReturn = expectedReturn / 100 / 12;
+
+            // FV of current savings
+            const fvCurrentSavings = currentSavings * Math.pow(1 + monthlyReturn, monthsToRetirement);
+
+            // FV of monthly contributions (annuity)
+            let fvContributions = 0;
+            if (monthlyReturn > 0 && monthsToRetirement > 0) {
+                fvContributions = monthlyContribution * ((Math.pow(1 + monthlyReturn, monthsToRetirement) - 1) / monthlyReturn);
+            } else {
+                fvContributions = monthlyContribution * monthsToRetirement;
+            }
+
+            const projectedSavings = fvCurrentSavings + fvContributions;
+            const totalContributions = currentSavings + (monthlyContribution * monthsToRetirement);
+            const investmentGrowth = projectedSavings - totalContributions;
+
+            // Calculate monthly income from savings at withdrawal rate
+            const annualFromSavings = projectedSavings * (withdrawalRate / 100);
+            const monthlyFromSavings = annualFromSavings / 12;
+
+            // Total monthly income
+            const totalMonthlyIncome = monthlyFromSavings + socialSecurity + pensionIncome + otherIncome;
+
+            // Adjust desired income for inflation
+            const inflationMultiplier = Math.pow(1 + inflationRate / 100, yearsToRetirement);
+            const futureDesiredIncome = desiredIncome * inflationMultiplier;
+
+            // Calculate if nest egg will last
+            const realReturn = ((1 + expectedReturn / 100) / (1 + inflationRate / 100)) - 1;
+            let nestEggYears = yearsInRetirement;
+
+            if (withdrawalRate / 100 > realReturn) {
+                // Calculate how long money lasts with declining balance
+                const annualWithdrawal = projectedSavings * (withdrawalRate / 100);
+                let balance = projectedSavings;
+                nestEggYears = 0;
+                while (balance > 0 && nestEggYears < 100) {
+                    balance = balance * (1 + realReturn) - annualWithdrawal;
+                    nestEggYears++;
+                }
+            } else {
+                nestEggYears = 100; // Essentially infinite
+            }
+
+            // Update display
+            document.getElementById('projectedSavings').textContent = formatCurrency(projectedSavings);
+            document.getElementById('retireAgeDisplay').textContent = retirementAge;
+            document.getElementById('monthlyFromSavings').textContent = formatCurrency(monthlyFromSavings);
+            document.getElementById('totalMonthlyIncome').textContent = formatCurrency(totalMonthlyIncome);
+
+            document.getElementById('savingsIncome').textContent = formatCurrency(monthlyFromSavings) + '/mo';
+            document.getElementById('ssIncome').textContent = formatCurrency(socialSecurity) + '/mo';
+            document.getElementById('pensionIncomeDisplay').textContent = formatCurrency(pensionIncome) + '/mo';
+            document.getElementById('otherIncomeDisplay').textContent = formatCurrency(otherIncome) + '/mo';
+            document.getElementById('totalIncomeDisplay').textContent = formatCurrency(totalMonthlyIncome) + '/mo';
+
+            document.getElementById('yearsToRetirement').textContent = yearsToRetirement + ' years';
+            document.getElementById('totalContributions').textContent = formatCurrency(totalContributions);
+            document.getElementById('investmentGrowth').textContent = formatCurrency(investmentGrowth);
+
+            const finalAge = retirementAge + Math.min(nestEggYears, 50);
+            document.getElementById('nestEggLasts').textContent = nestEggYears >= 50 ? 'Age 90+' : 'Age ' + finalAge;
+
+            // Update income bar
+            const incomePercent = Math.min(100, (totalMonthlyIncome / desiredIncome) * 100);
+            const shortfall = desiredIncome - totalMonthlyIncome;
+
+            const incomeBar = document.getElementById('incomeBar');
+            if (incomePercent >= 100) {
+                incomeBar.innerHTML = `<div class="allocation-segment" style="background: #38a169; flex: 100;">${Math.round(incomePercent)}%</div>`;
+                document.getElementById('incomeGapText').innerHTML = `<span style="color: var(--secondary-color);">You're on track! Projected income exceeds your goal by ${formatCurrency(totalMonthlyIncome - desiredIncome)}/month.</span>`;
+            } else {
+                incomeBar.innerHTML = `
+                    <div class="allocation-segment" style="background: #38a169; flex: ${incomePercent};">${Math.round(incomePercent)}%</div>
+                    <div class="allocation-segment" style="background: #e53e3e; flex: ${100 - incomePercent};">Gap</div>
+                `;
+                document.getElementById('incomeGapText').innerHTML = `<span style="color: #e53e3e;">Income gap: You need ${formatCurrency(shortfall)}/month more. Consider increasing contributions or delaying retirement.</span>`;
+            }
+
+            // Update inflation note
+            document.getElementById('inflationNote').textContent =
+                `Your ${formatCurrency(desiredIncome)}/mo goal today will feel like needing ${formatCurrency(futureDesiredIncome)}/mo in ${yearsToRetirement} years due to ${inflationRate}% inflation. Plan accordingly!`;
+        }
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>

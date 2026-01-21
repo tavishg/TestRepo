@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Education & Articles - FinanceTools</title>
+    <meta name="description" content="Learn about personal finance, investing, retirement planning, and building wealth. Free educational articles for beginners and experienced investors alike.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .article-full {
+            background: var(--bg-white);
+            border-radius: var(--radius-md);
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .article-full h2 {
+            margin-bottom: 1rem;
+        }
+        .article-full .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-full p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        .article-full h3 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .article-full ul, .article-full ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        .article-full li {
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            margin: 2rem 0;
+        }
+        .highlight-box h4 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        .highlight-box p {
+            color: rgba(255,255,255,0.9);
+            margin: 0;
+        }
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 0.5rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            background: var(--bg-white);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .filter-tab:hover, .filter-tab.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+        .key-takeaway {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+        .key-takeaway h4 {
+            color: #2c5282;
+            margin-bottom: 0.5rem;
+        }
+        .example-box {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin: 1.5rem 0;
+        }
+        .example-box h4 {
+            margin-bottom: 0.75rem;
+        }
+        .article-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .article-nav a {
+            padding: 0.5rem 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">$</div>
+                <span>FinanceTools</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="mortgage.html">Mortgage</a></li>
+                <li><a href="retirement.html">Retirement</a></li>
+                <li><a href="diversification.html">Diversification</a></li>
+                <li><a href="articles.html" class="active">Learn</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" style="padding: 3rem 0;">
+        <div class="container">
+            <h1>Financial Education</h1>
+            <p>Clear, actionable guides to help you make better decisions about money, investing, and building long-term wealth.</p>
+        </div>
+    </section>
+
+    <!-- Articles -->
+    <section class="calculator-page">
+        <div class="container">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterArticles('all')">All Articles</button>
+                <button class="filter-tab" onclick="filterArticles('beginner')">Beginner</button>
+                <button class="filter-tab" onclick="filterArticles('investing')">Investing</button>
+                <button class="filter-tab" onclick="filterArticles('retirement')">Retirement</button>
+                <button class="filter-tab" onclick="filterArticles('crypto')">Digital Assets</button>
+            </div>
+
+            <!-- Article 1: Compound Interest -->
+            <article class="article-full" data-category="beginner investing">
+                <span class="article-tag">Beginner</span>
+                <h2>The Power of Compound Interest: Why Starting Early is Your Superpower</h2>
+                <div class="article-meta">
+                    <span>10 min read</span>
+                    <span>Updated January 2025</span>
+                </div>
+
+                <p>If there's one concept that can change your financial future, it's compound interest. Albert Einstein allegedly called it "the eighth wonder of the world," and while that quote might be apocryphal, the sentiment is spot-on. Understanding compound interest is the foundation of building wealth.</p>
+
+                <h3>What Is Compound Interest?</h3>
+                <p>Simple interest is calculated only on your initial investment (principal). Compound interest is calculated on your principal <em>plus</em> all the interest you've already earned. In other words, your money earns money, and then that money earns money too.</p>
+
+                <div class="example-box">
+                    <h4>Example: $10,000 at 7% Annual Return</h4>
+                    <p><strong>After 10 years:</strong> $19,672 (you nearly doubled your money)</p>
+                    <p><strong>After 20 years:</strong> $38,697 (almost 4x your original investment)</p>
+                    <p><strong>After 30 years:</strong> $76,123 (over 7.5x your money)</p>
+                    <p><strong>After 40 years:</strong> $149,745 (nearly 15x your original investment)</p>
+                </div>
+
+                <p>Notice how the growth accelerates over time? That's the magic. In the first 10 years, you gained about $10,000. In the last 10 years (30-40), you gained over $73,000—without adding any new money.</p>
+
+                <h3>Why Starting Early Matters So Much</h3>
+                <p>Time is the most important variable in the compound interest formula. Here's a comparison that might surprise you:</p>
+
+                <div class="highlight-box">
+                    <h4>The Tale of Two Investors</h4>
+                    <p><strong>Alex</strong> starts investing $500/month at age 25 and stops at 35 (10 years, $60,000 total invested).</p>
+                    <p><strong>Jordan</strong> starts investing $500/month at age 35 and continues until 65 (30 years, $180,000 total invested).</p>
+                    <p>At 7% annual returns, Alex ends up with <strong>more money at 65</strong> despite investing only one-third as much. That's the power of those extra 10 years of compounding.</p>
+                </div>
+
+                <h3>Practical Steps to Harness Compound Interest</h3>
+                <ol>
+                    <li><strong>Start immediately.</strong> Even small amounts matter. $100/month starting at 22 beats $300/month starting at 32.</li>
+                    <li><strong>Automate your investments.</strong> Set up automatic transfers so you invest consistently without thinking about it.</li>
+                    <li><strong>Reinvest dividends.</strong> Most brokerages offer automatic dividend reinvestment (DRIP). Use it.</li>
+                    <li><strong>Minimize fees.</strong> A 1% annual fee might seem small, but it compounds against you. Choose low-cost index funds.</li>
+                    <li><strong>Stay invested.</strong> Don't try to time the market. Time <em>in</em> the market beats timing the market.</li>
+                </ol>
+
+                <div class="key-takeaway">
+                    <h4>Key Takeaway</h4>
+                    <p>The best time to start investing was 10 years ago. The second-best time is today. Don't let perfect be the enemy of good—start with whatever you can, and let compound interest work its magic over decades.</p>
+                </div>
+
+                <a href="retirement.html" class="btn btn-primary" style="margin-top: 1rem;">Try Our Retirement Calculator</a>
+            </article>
+
+            <!-- Article 2: Retirement Income -->
+            <article class="article-full" data-category="retirement investing">
+                <span class="article-tag">Retirement</span>
+                <h2>Building a Retirement Income Portfolio: From Accumulation to Distribution</h2>
+                <div class="article-meta">
+                    <span>15 min read</span>
+                    <span>Updated January 2025</span>
+                </div>
+
+                <p>Most investment advice focuses on accumulating wealth. But the transition from saving to spending—from accumulation to distribution—is one of the most challenging shifts in your financial life. How do you turn a pile of savings into a reliable income stream that lasts 30+ years?</p>
+
+                <h3>The Retirement Income Challenge</h3>
+                <p>When you're working, you have one primary concern: save as much as possible and invest for growth. In retirement, you face multiple competing challenges:</p>
+                <ul>
+                    <li><strong>Longevity risk:</strong> You might live longer than expected and run out of money</li>
+                    <li><strong>Inflation risk:</strong> Your purchasing power erodes over time</li>
+                    <li><strong>Sequence risk:</strong> Market crashes early in retirement can devastate your portfolio</li>
+                    <li><strong>Withdrawal rate:</strong> Taking too much too fast depletes your savings</li>
+                </ul>
+
+                <h3>The Bucket Strategy</h3>
+                <p>One popular approach divides your retirement savings into three "buckets" based on when you'll need the money:</p>
+
+                <div class="example-box">
+                    <h4>Three-Bucket Approach</h4>
+                    <p><strong>Bucket 1 (Short-term, 1-2 years):</strong> Cash and money market funds. This is your spending money that won't fluctuate with the market. Keeps you from selling stocks during downturns.</p>
+                    <p><strong>Bucket 2 (Medium-term, 3-7 years):</strong> Bonds and stable income investments. Provides modest growth while protecting against volatility. Refills Bucket 1 as needed.</p>
+                    <p><strong>Bucket 3 (Long-term, 8+ years):</strong> Stocks and growth investments. This money has time to recover from market downturns and provides long-term growth to fight inflation.</p>
+                </div>
+
+                <h3>Income-Generating Investments</h3>
+                <p>A retirement portfolio focused on income might include:</p>
+                <ul>
+                    <li><strong>Dividend stocks:</strong> Companies that pay regular dividends (2-4% yield typical)</li>
+                    <li><strong>Bond funds:</strong> Government and corporate bonds for steady interest income</li>
+                    <li><strong>REITs:</strong> Real estate investment trusts often pay 3-5% dividends</li>
+                    <li><strong>Annuities:</strong> Insurance products that guarantee income (but watch for high fees)</li>
+                    <li><strong>Treasury I-Bonds:</strong> Government bonds that adjust for inflation</li>
+                </ul>
+
+                <h3>The 4% Rule (And Its Limitations)</h3>
+                <p>The "4% rule" suggests you can withdraw 4% of your portfolio in year one of retirement, then adjust for inflation each year, and have a high probability of not running out of money over 30 years.</p>
+
+                <p>However, this rule was based on historical US market returns and may be too aggressive in a low-return environment. Many financial planners now suggest 3-3.5% for more conservative planning.</p>
+
+                <div class="highlight-box">
+                    <h4>Flexible Withdrawal Strategy</h4>
+                    <p>Consider adjusting your withdrawals based on market performance. In good years, take a bit more or spend on wants. In bad years, tighten spending to essentials. This flexibility can significantly improve your portfolio's longevity.</p>
+                </div>
+
+                <div class="key-takeaway">
+                    <h4>Key Takeaway</h4>
+                    <p>Retirement income planning is more complex than accumulation. Consider working with a fee-only financial planner to create a personalized withdrawal strategy. Use our retirement calculator to run different scenarios and see how your choices affect your long-term security.</p>
+                </div>
+
+                <a href="retirement.html" class="btn btn-primary" style="margin-top: 1rem;">Plan Your Retirement Income</a>
+            </article>
+
+            <!-- Article 3: Bitcoin & Diversification -->
+            <article class="article-full" data-category="crypto investing">
+                <span class="article-tag">Digital Assets</span>
+                <h2>Should You Add Bitcoin to Your Portfolio? A Balanced Look</h2>
+                <div class="article-meta">
+                    <span>12 min read</span>
+                    <span>Updated January 2025</span>
+                </div>
+
+                <p>Bitcoin and other digital assets have become impossible to ignore. With major institutions, corporations, and even governments taking positions, the question has shifted from "Is crypto real?" to "Does it belong in my portfolio?" Let's examine the evidence objectively.</p>
+
+                <h3>The Case for a Small Allocation</h3>
+                <p>Several respected financial researchers have studied Bitcoin's potential role in diversified portfolios:</p>
+                <ul>
+                    <li><strong>Low correlation:</strong> Bitcoin has historically shown low correlation with stocks and bonds, meaning it often moves independently. This is the essence of diversification.</li>
+                    <li><strong>Asymmetric returns:</strong> With a small allocation (1-5%), if Bitcoin goes to zero, you lose 1-5% of your portfolio. If it goes up 10x, you gain significantly. The risk/reward is asymmetric.</li>
+                    <li><strong>Institutional adoption:</strong> Major financial institutions now offer Bitcoin products, lending legitimacy and potentially reducing extreme volatility over time.</li>
+                    <li><strong>Inflation hedge potential:</strong> With a fixed supply of 21 million coins, Bitcoin can't be "printed" like fiat currency, making it a potential hedge against monetary inflation.</li>
+                </ul>
+
+                <h3>The Significant Risks</h3>
+                <p>Before investing any money in Bitcoin, understand these risks:</p>
+                <ul>
+                    <li><strong>Extreme volatility:</strong> Bitcoin has dropped 50-80% multiple times in its history. Can you stomach seeing your investment cut in half?</li>
+                    <li><strong>No intrinsic value:</strong> Unlike stocks (ownership in companies) or bonds (loans with interest), Bitcoin generates no cash flow. Its value is purely based on what others will pay for it.</li>
+                    <li><strong>Regulatory uncertainty:</strong> Governments could restrict or ban Bitcoin. While unlikely in the US, regulations could significantly impact price.</li>
+                    <li><strong>Security concerns:</strong> If you hold Bitcoin yourself, losing your keys means losing your money forever. Exchanges have been hacked.</li>
+                    <li><strong>Environmental concerns:</strong> Bitcoin mining uses significant energy, though this is evolving with renewable energy adoption.</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h4>Research Findings</h4>
+                    <p>A 2019 Yale study found that a risk-tolerant investor might optimally allocate up to 6% to Bitcoin based on historical risk-return characteristics. A Fidelity study suggested 1-5% could improve risk-adjusted returns. However, past performance is not indicative of future results, and Bitcoin's short history makes projections unreliable.</p>
+                </div>
+
+                <h3>How to Think About Bitcoin Allocation</h3>
+                <ol>
+                    <li><strong>Only invest what you can afford to lose completely.</strong> This isn't a cliché—it's essential risk management.</li>
+                    <li><strong>Start small.</strong> A 1-2% allocation lets you participate in potential upside while limiting downside.</li>
+                    <li><strong>Use dollar-cost averaging.</strong> Don't try to time the market. Buy small amounts regularly over time.</li>
+                    <li><strong>Consider the tax implications.</strong> Crypto is taxed as property in the US. Short-term gains are taxed as income.</li>
+                    <li><strong>Secure your holdings properly.</strong> If using self-custody, learn proper security practices. If using exchanges, choose reputable ones.</li>
+                </ol>
+
+                <div class="example-box">
+                    <h4>Example: 2% Bitcoin Allocation</h4>
+                    <p>If you have a $100,000 portfolio with 2% in Bitcoin ($2,000):</p>
+                    <p><strong>If Bitcoin drops 50%:</strong> You lose $1,000 (1% of total portfolio)</p>
+                    <p><strong>If Bitcoin doubles:</strong> You gain $2,000 (2% of total portfolio)</p>
+                    <p>The position sizing limits your downside while maintaining upside exposure.</p>
+                </div>
+
+                <div class="key-takeaway">
+                    <h4>Key Takeaway</h4>
+                    <p>Bitcoin is a speculative asset that may have a place in a diversified portfolio for investors who understand the risks. A small allocation (1-5%) limits downside while providing exposure to potential gains. Never invest more than you can afford to lose, and ensure the rest of your financial house is in order first (emergency fund, retirement contributions, no high-interest debt).</p>
+                </div>
+
+                <a href="diversification.html" class="btn btn-primary" style="margin-top: 1rem;">Try Our Diversification Tool</a>
+            </article>
+
+            <!-- Article 4: Emergency Fund -->
+            <article class="article-full" data-category="beginner">
+                <span class="article-tag">Beginner</span>
+                <h2>The Foundation of Financial Security: Building Your Emergency Fund</h2>
+                <div class="article-meta">
+                    <span>8 min read</span>
+                    <span>Updated January 2025</span>
+                </div>
+
+                <p>Before investing a single dollar in the stock market, before optimizing your portfolio, before any advanced strategy—you need an emergency fund. It's not exciting, but it's the foundation that prevents financial catastrophe.</p>
+
+                <h3>Why Emergency Funds Matter</h3>
+                <p>Life happens. Cars break down. Jobs disappear. Medical emergencies strike. Without cash reserves, you're forced into terrible options:</p>
+                <ul>
+                    <li>Selling investments at a loss (possibly in a down market)</li>
+                    <li>Taking on high-interest credit card debt</li>
+                    <li>Raiding retirement accounts (with penalties and taxes)</li>
+                    <li>Borrowing from friends and family (straining relationships)</li>
+                </ul>
+
+                <p>An emergency fund is self-insurance. It's boring money sitting in a boring savings account, and that's exactly what you need when life gets chaotic.</p>
+
+                <h3>How Much Do You Need?</h3>
+                <p>The standard advice is 3-6 months of essential expenses. But the right amount depends on your situation:</p>
+
+                <div class="example-box">
+                    <h4>Emergency Fund Sizing</h4>
+                    <p><strong>3 months:</strong> Dual-income household, stable jobs, other liquid assets, good health insurance</p>
+                    <p><strong>6 months:</strong> Single income, moderate job security, some financial obligations</p>
+                    <p><strong>9-12 months:</strong> Self-employed, volatile industry, single parent, chronic health issues, or approaching retirement</p>
+                </div>
+
+                <h3>Where to Keep It</h3>
+                <p>Your emergency fund should be:</p>
+                <ul>
+                    <li><strong>Liquid:</strong> Accessible within 1-2 days maximum</li>
+                    <li><strong>Safe:</strong> No market risk—this isn't investment money</li>
+                    <li><strong>Separate:</strong> Keep it in a different account from daily spending to avoid temptation</li>
+                </ul>
+
+                <p>High-yield savings accounts (currently offering 4-5% APY) are ideal. They're FDIC insured, liquid, and actually pay decent interest in the current rate environment.</p>
+
+                <h3>Building Your Emergency Fund</h3>
+                <ol>
+                    <li><strong>Calculate your target.</strong> List essential monthly expenses (housing, utilities, food, insurance, minimum debt payments). Multiply by your target months.</li>
+                    <li><strong>Start with $1,000.</strong> This covers most minor emergencies. It's a psychological win.</li>
+                    <li><strong>Automate contributions.</strong> Treat it like a bill. Set up automatic transfers on payday.</li>
+                    <li><strong>Use windfalls wisely.</strong> Tax refunds, bonuses, and gifts can accelerate your progress.</li>
+                    <li><strong>Protect it fiercely.</strong> Only use it for true emergencies. A sale at your favorite store is not an emergency.</li>
+                </ol>
+
+                <div class="key-takeaway">
+                    <h4>Key Takeaway</h4>
+                    <p>An emergency fund isn't an investment—it's insurance. The "return" on your emergency fund is the credit card interest you don't pay, the investments you don't sell at a loss, and the peace of mind that lets you sleep at night. Build it before worrying about optimizing your portfolio.</p>
+                </div>
+            </article>
+
+            <!-- More articles teaser -->
+            <div class="card" style="text-align: center; padding: 3rem;">
+                <h3>More Articles Coming Soon</h3>
+                <p style="max-width: 500px; margin: 1rem auto;">We're constantly adding new educational content on topics like tax-advantaged accounts, asset allocation by age, real estate investing, and more.</p>
+                <p style="color: var(--text-light);">Check back regularly or bookmark this page.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" style="margin-top: 3rem;">
+        <div class="container">
+            <h2>Put Your Knowledge Into Practice</h2>
+            <p>Use our free calculators to apply what you've learned and make better financial decisions.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="retirement.html" class="btn btn-secondary">Retirement Planner</a>
+                <a href="diversification.html" class="btn btn-secondary">Diversification Tool</a>
+                <a href="mortgage.html" class="btn btn-secondary">Mortgage Calculator</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">$</div>
+                        <span style="color: white;">FinanceTools</span>
+                    </div>
+                    <p>Empowering people to make smarter financial decisions through free tools and education.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="mortgage.html">Mortgage Calculator</a></li>
+                        <li><a href="retirement.html">Retirement Planner</a></li>
+                        <li><a href="diversification.html">Diversification Tool</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Learn</h4>
+                    <ul>
+                        <li><a href="articles.html">All Articles</a></li>
+                        <li><a href="articles.html">Beginner Guides</a></li>
+                        <li><a href="articles.html">Retirement Planning</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FinanceTools. All rights reserved. For educational purposes only—not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        function filterArticles(category) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter articles
+            document.querySelectorAll('.article-full').forEach(article => {
+                if (category === 'all' || article.dataset.category.includes(category)) {
+                    article.style.display = 'block';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
