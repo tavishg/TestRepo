@@ -2,21 +2,24 @@
 SPY Trend Inflection Point Detector
 
 Identifies dates when SPY transitions between uptrends and downtrends
-based on swing (pivot) highs and lows on the daily chart.
+based on swing (pivot) highs and lows on the daily or weekly chart.
 
 Uptrend:   Higher highs AND higher lows (on pivot points)
 Downtrend: Lower highs AND lower lows (on pivot points)
 Inflection: The date when the regime flips.
 
 Usage:
-    # Auto-download from Yahoo Finance (requires yfinance):
+    # Daily chart (default):
     python spy_trend_inflections.py
 
-    # From a local CSV file (must have Date, High, Low columns):
-    python spy_trend_inflections.py --csv SPY_daily.csv
+    # Weekly chart (less noise):
+    python spy_trend_inflections.py --timeframe weekly
 
-    # Adjust pivot lookback window (default k=5):
-    python spy_trend_inflections.py --k 3
+    # Weekly with custom pivot window:
+    python spy_trend_inflections.py --timeframe weekly --k 2
+
+    # From a local CSV file (must have Date, High, Low, Close columns):
+    python spy_trend_inflections.py --csv SPY_daily.csv
 
     # Custom date range:
     python spy_trend_inflections.py --start 2000-01-01 --end 2025-01-01
@@ -102,6 +105,19 @@ def load_from_csv(path: str) -> pd.DataFrame:
             raise ValueError(f"CSV must have a '{col}' column. Found: {list(df.columns)}")
     df = df.dropna(subset=["High", "Low"]).sort_index()
     return df
+
+
+def resample_to_weekly(df: pd.DataFrame) -> pd.DataFrame:
+    """Resample daily OHLC bars into weekly bars (Mon-Fri weeks)."""
+    weekly = df.resample("W-FRI").agg({
+        "Open": "first",
+        "High": "max",
+        "Low": "min",
+        "Close": "last",
+    }).dropna()
+    if "Volume" in df.columns:
+        weekly["Volume"] = df["Volume"].resample("W-FRI").sum()
+    return weekly
 
 
 def load_from_yfinance(ticker: str, start: str, end=None) -> pd.DataFrame:
@@ -190,7 +206,7 @@ def backtest(df: pd.DataFrame, flips: pd.DataFrame, initial_capital: float = 100
     return result
 
 
-def compute_stats(equity: pd.Series, label: str):
+def compute_stats(equity: pd.Series, label: str, periods_per_year: int = 252):
     """Compute key performance stats for an equity curve."""
     total_days = (equity.index[-1] - equity.index[0]).days
     years = total_days / 365.25
@@ -202,8 +218,8 @@ def compute_stats(equity: pd.Series, label: str):
     drawdown = (equity - running_max) / running_max
     max_dd = drawdown.min() * 100
 
-    daily_ret = equity.pct_change().dropna()
-    sharpe = (daily_ret.mean() / daily_ret.std() * np.sqrt(252)) if daily_ret.std() > 0 else 0
+    ret = equity.pct_change().dropna()
+    sharpe = (ret.mean() / ret.std() * np.sqrt(periods_per_year)) if ret.std() > 0 else 0
 
     return {
         "label": label,
@@ -265,32 +281,49 @@ def print_backtest_report(bt: pd.DataFrame, flips: pd.DataFrame):
 
 def main():
     parser = argparse.ArgumentParser(description="SPY trend inflection detector")
-    parser.add_argument("--csv", type=str, help="Path to CSV with Date,High,Low columns")
+    parser.add_argument("--csv", type=str, help="Path to CSV with Date,High,Low,Close columns")
     parser.add_argument("--ticker", type=str, default="SPY", help="Ticker to download (default: SPY)")
     parser.add_argument("--start", type=str, default="1993-01-01", help="Start date (default: 1993-01-01)")
     parser.add_argument("--end", type=str, default=None, help="End date (default: today)")
-    parser.add_argument("--k", type=int, default=5, help="Pivot lookback window (default: 5)")
+    parser.add_argument("--timeframe", type=str, default="daily", choices=["daily", "weekly"],
+                        help="Timeframe for pivot detection (default: daily)")
+    parser.add_argument("--k", type=int, default=None,
+                        help="Pivot lookback window (default: 5 for daily, 3 for weekly)")
     parser.add_argument("--output", type=str, default=None, help="Output CSV path")
-    parser.add_argument("--backtest", action="store_true", help="Run 12-year backtest")
+    parser.add_argument("--backtest", action="store_true", help="Run backtest")
     parser.add_argument("--backtest-years", type=int, default=12, help="Number of years to backtest (default: 12)")
     parser.add_argument("--capital", type=float, default=10000, help="Starting capital for backtest (default: 10000)")
     args = parser.parse_args()
 
+    # Default k depends on timeframe
+    k = args.k if args.k is not None else (3 if args.timeframe == "weekly" else 5)
+
     if args.csv:
         print(f"Loading data from {args.csv} ...")
-        df = load_from_csv(args.csv)
+        df_daily = load_from_csv(args.csv)
     else:
-        df = load_from_yfinance(args.ticker, args.start, args.end)
+        df_daily = load_from_yfinance(args.ticker, args.start, args.end)
 
-    print(f"Loaded {len(df)} trading days ({df.index[0].date()} to {df.index[-1].date()})")
+    print(f"Loaded {len(df_daily)} daily bars ({df_daily.index[0].date()} to {df_daily.index[-1].date()})")
 
-    pivots = find_pivots(df, k=args.k)
-    print(f"Found {pivots['pivot_high'].sum()} pivot highs and {pivots['pivot_low'].sum()} pivot lows (k={args.k})")
+    # Resample to weekly if requested
+    if args.timeframe == "weekly":
+        df = resample_to_weekly(df_daily)
+        bar_label = "weekly"
+        periods_per_year = 52
+        print(f"Resampled to {len(df)} weekly bars")
+    else:
+        df = df_daily
+        bar_label = "daily"
+        periods_per_year = 252
+
+    pivots = find_pivots(df, k=k)
+    print(f"Found {pivots['pivot_high'].sum()} pivot highs and {pivots['pivot_low'].sum()} pivot lows (k={k}, {bar_label})")
 
     flips = trend_inflections_from_pivots(pivots)
 
     print(f"\n{'='*60}")
-    print(f"Found {len(flips)} trend regime inflection points (k={args.k})")
+    print(f"Found {len(flips)} trend inflection points (k={k}, {bar_label})")
     print(f"{'='*60}\n")
 
     if not flips.empty:
@@ -300,15 +333,15 @@ def main():
     else:
         print("No inflection points found.")
 
-    out = args.output or f"{args.ticker}_trend_inflections_k{args.k}.csv"
+    out = args.output or f"{args.ticker}_trend_inflections_{bar_label}_k{k}.csv"
     flips.to_csv(out, index=False)
     print(f"\nSaved to {out}")
 
-    # --- Backtest ---
+    # --- Backtest (always uses daily bars for realistic execution) ---
     if args.backtest and not flips.empty:
         from datetime import datetime, timedelta
         cutoff = datetime.now() - timedelta(days=args.backtest_years * 365)
-        bt_df = df.loc[df.index >= pd.Timestamp(cutoff)]
+        bt_df = df_daily.loc[df_daily.index >= pd.Timestamp(cutoff)]
         bt_flips = flips[pd.to_datetime(flips["date"]) >= pd.Timestamp(cutoff)]
 
         if bt_df.empty or bt_flips.empty:
@@ -317,7 +350,7 @@ def main():
             bt = backtest(bt_df, bt_flips, initial_capital=args.capital)
             print_backtest_report(bt, bt_flips)
 
-            bt_out = f"{args.ticker}_backtest_{args.backtest_years}yr.csv"
+            bt_out = f"{args.ticker}_backtest_{bar_label}_{args.backtest_years}yr.csv"
             bt.to_csv(bt_out)
             print(f"Backtest equity curve saved to {bt_out}")
 
