@@ -127,6 +127,142 @@ def load_from_yfinance(ticker: str, start: str, end=None) -> pd.DataFrame:
     return df
 
 
+def backtest(df: pd.DataFrame, flips: pd.DataFrame, initial_capital: float = 10000.0):
+    """
+    Backtest the trend-following strategy over the price data.
+
+    Rules:
+        - Start in cash.
+        - On an "uptrend" signal: buy SPY at the next trading day's Close.
+        - On a "downtrend" signal: sell SPY at the next trading day's Close, go to cash.
+
+    Returns a DataFrame with daily portfolio value for both the strategy and buy-and-hold.
+    """
+    closes = df[["Close"]].copy()
+    closes = closes.sort_index()
+
+    signal_dates = {}
+    for _, row in flips.iterrows():
+        sig_date = pd.Timestamp(row["date"])
+        signal_dates[sig_date] = row["regime"]
+
+    dates = closes.index.tolist()
+    position = 0.0  # shares held
+    cash = initial_capital
+    strategy_values = []
+    pending_signal = None
+
+    for i, dt in enumerate(dates):
+        price = closes.loc[dt, "Close"]
+        if isinstance(price, pd.Series):
+            price = price.iloc[0]
+
+        # Execute pending signal from yesterday at today's close
+        if pending_signal == "uptrend" and position == 0:
+            position = cash / price
+            cash = 0.0
+        elif pending_signal == "downtrend" and position > 0:
+            cash = position * price
+            position = 0.0
+        pending_signal = None
+
+        # Check for new signal on this date
+        if dt in signal_dates:
+            pending_signal = signal_dates[dt]
+
+        portfolio_value = cash + position * price
+        strategy_values.append(portfolio_value)
+
+    # Buy-and-hold: invest full capital on day 1
+    first_price = closes.iloc[0]["Close"]
+    if isinstance(first_price, pd.Series):
+        first_price = first_price.iloc[0]
+    bh_shares = initial_capital / first_price
+    bh_values = [bh_shares * (c.iloc[0] if isinstance(c, pd.Series) else c)
+                 for c in closes["Close"]]
+
+    result = pd.DataFrame({
+        "date": dates,
+        "strategy": strategy_values,
+        "buy_and_hold": bh_values,
+    })
+    result.set_index("date", inplace=True)
+    return result
+
+
+def compute_stats(equity: pd.Series, label: str):
+    """Compute key performance stats for an equity curve."""
+    total_days = (equity.index[-1] - equity.index[0]).days
+    years = total_days / 365.25
+
+    total_return = (equity.iloc[-1] / equity.iloc[0] - 1) * 100
+    cagr = ((equity.iloc[-1] / equity.iloc[0]) ** (1 / years) - 1) * 100 if years > 0 else 0
+
+    running_max = equity.cummax()
+    drawdown = (equity - running_max) / running_max
+    max_dd = drawdown.min() * 100
+
+    daily_ret = equity.pct_change().dropna()
+    sharpe = (daily_ret.mean() / daily_ret.std() * np.sqrt(252)) if daily_ret.std() > 0 else 0
+
+    return {
+        "label": label,
+        "start_value": f"${equity.iloc[0]:,.2f}",
+        "end_value": f"${equity.iloc[-1]:,.2f}",
+        "total_return": f"{total_return:+.1f}%",
+        "cagr": f"{cagr:.1f}%",
+        "max_drawdown": f"{max_dd:.1f}%",
+        "sharpe_ratio": f"{sharpe:.2f}",
+    }
+
+
+def count_trades(flips: pd.DataFrame):
+    """Count round-trip trades and win/loss info."""
+    entries, exits, trades = [], [], []
+    for _, row in flips.iterrows():
+        if row["regime"] == "uptrend":
+            entries.append(row["date"])
+        elif row["regime"] == "downtrend" and entries:
+            exits.append(row["date"])
+
+    return len(entries), len(exits)
+
+
+def print_backtest_report(bt: pd.DataFrame, flips: pd.DataFrame):
+    """Print a human-readable backtest summary."""
+    strat_stats = compute_stats(bt["strategy"], "Trend Strategy")
+    bh_stats = compute_stats(bt["buy_and_hold"], "Buy & Hold SPY")
+
+    n_entries, n_exits = count_trades(flips)
+
+    print(f"\n{'='*60}")
+    print(f"  BACKTEST RESULTS  ({bt.index[0].date()} to {bt.index[-1].date()})")
+    print(f"{'='*60}")
+    print(f"  Starting capital: $10,000")
+    print()
+
+    for stats in [strat_stats, bh_stats]:
+        print(f"  --- {stats['label']} ---")
+        print(f"  Final value:    {stats['end_value']}")
+        print(f"  Total return:   {stats['total_return']}")
+        print(f"  Annual return:  {stats['cagr']}")
+        print(f"  Max drawdown:   {stats['max_drawdown']}")
+        print(f"  Sharpe ratio:   {stats['sharpe_ratio']}")
+        print()
+
+    print(f"  --- Trade Summary ---")
+    print(f"  Buy signals:    {n_entries}")
+    print(f"  Sell signals:   {n_exits}")
+    print(f"  Round trips:    {min(n_entries, n_exits)}")
+
+    # Time in market
+    in_market_days = (bt["strategy"].diff().ne(0) | (bt["strategy"] != bt["strategy"].iloc[0])).sum()
+    total_days = len(bt)
+    time_in = sum(1 for i in range(len(bt)) if bt["strategy"].iloc[i] != bt["strategy"].iloc[max(0,i-1)] or i == 0)
+
+    print(f"{'='*60}\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description="SPY trend inflection detector")
     parser.add_argument("--csv", type=str, help="Path to CSV with Date,High,Low columns")
@@ -135,6 +271,9 @@ def main():
     parser.add_argument("--end", type=str, default=None, help="End date (default: today)")
     parser.add_argument("--k", type=int, default=5, help="Pivot lookback window (default: 5)")
     parser.add_argument("--output", type=str, default=None, help="Output CSV path")
+    parser.add_argument("--backtest", action="store_true", help="Run 12-year backtest")
+    parser.add_argument("--backtest-years", type=int, default=12, help="Number of years to backtest (default: 12)")
+    parser.add_argument("--capital", type=float, default=10000, help="Starting capital for backtest (default: 10000)")
     args = parser.parse_args()
 
     if args.csv:
@@ -164,6 +303,23 @@ def main():
     out = args.output or f"{args.ticker}_trend_inflections_k{args.k}.csv"
     flips.to_csv(out, index=False)
     print(f"\nSaved to {out}")
+
+    # --- Backtest ---
+    if args.backtest and not flips.empty:
+        from datetime import datetime, timedelta
+        cutoff = datetime.now() - timedelta(days=args.backtest_years * 365)
+        bt_df = df.loc[df.index >= pd.Timestamp(cutoff)]
+        bt_flips = flips[pd.to_datetime(flips["date"]) >= pd.Timestamp(cutoff)]
+
+        if bt_df.empty or bt_flips.empty:
+            print("Not enough data in the backtest window.")
+        else:
+            bt = backtest(bt_df, bt_flips, initial_capital=args.capital)
+            print_backtest_report(bt, bt_flips)
+
+            bt_out = f"{args.ticker}_backtest_{args.backtest_years}yr.csv"
+            bt.to_csv(bt_out)
+            print(f"Backtest equity curve saved to {bt_out}")
 
 
 if __name__ == "__main__":
